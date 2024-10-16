@@ -7,75 +7,104 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LawnMower {
-	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		try {
+		File inputDirectory = new File("C:/Users/leo/eclipse-workspace/lawnmower/input/level2/");
+		String outputDirectory = "C:/Users/leo/eclipse-workspace/lawnmower/output/level2/";
 
-			//input output directory
-			File inputDirectory = new File("C:/Users/leo/eclipse-workspace/lawnmayer/input/level1/");
-			String outputDirectory = "C:/Users/leo/eclipse-workspace/";
+		if (inputDirectory.isDirectory()) {
 
-			if (inputDirectory.isDirectory()) {
+			File[] files = inputDirectory.listFiles();
+			
+			if (files != null) {
+				int i = 1;
+				for (File file : files) {
+					if (file.isFile()) {
 
-				File[] files = inputDirectory.listFiles();
+						List<String> directions;
+						try {
+							directions = readInputLine(file.getPath());
 
-				if (files != null) {
-					int i = 1;
-					for (File file : files) {
-						if (file.isFile()) {
-							readInput(file.getPath(), outputDirectory + "output1_" + i + ".out");			
-							i++;
+							writeOuput(outputDirectory + "output2_" + i + ".out", directions);
+
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
+
 					}
+					i++;
 				}
 			}
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
 		}
 	}
 
-	private static void readInput(String inputPath, String outputPath) throws IOException {
+	private static int[] calculateRectangleSize(String directions) throws IOException {
+		int x = 0, y = 0;
+		int minX = 0, maxX = 0, minY = 0, maxY = 0;
 
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(new FileInputStream(new File(inputPath)), "UTF-8"));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));
+		for (char direction : directions.toCharArray()) {
+
+			switch (direction) {
+			case 'W':
+				y++;
+				break;
+			case 'A':
+				x--;
+				break;
+			case 'S':
+				y--;
+				break;
+			case 'D':
+				x++;
+				break;
+			}
+			minX = Math.min(minX, x);
+			maxX = Math.max(maxX, x);
+			minY = Math.min(minY, y);
+			maxY = Math.max(maxY, y);
+		}
+
+		int width = maxX - minX + 1;
+		int height = maxY - minY + 1;
+
+		return new int[] { width, height };
+	}
+
+	private static List<String> readInputLine(String path) throws IOException {
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path)), "UTF-8"));
 
 		reader.readLine();
 
-		char[] directions = { 'W', 'D', 'S', 'A' };
+		List<String> directions = new ArrayList<String>();
 
-		//We browse the file as long as it’s not empty.
 		while (reader.ready()) {
+			String line = reader.readLine();
 
-			String line = reader.readLine(); // read line
-
-			char[] charArray = line.toCharArray(); 
-
-			Map<Character, Integer> charCountMap = new HashMap<>();
-
-			for (char character : charArray) {
-				charCountMap.put(character, charCountMap.getOrDefault(character, 0) + 1);
-			}
-
-			for (char direction : directions) {
-
-				int value = charCountMap.getOrDefault(direction, 0);
-
-				
-				writer.write(value + " ");
-			}
-			writer.newLine();
-
+			directions.add(line);
 		}
 
 		reader.close();
+		return directions;
+	}
+
+	private static void writeOuput(String path, List<String> directions) throws IOException {
+
+		BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+
+		for (String direction : directions) {
+			int[] dimensions;
+			dimensions = calculateRectangleSize(direction);
+
+			writer.write(dimensions[0] + " " + dimensions[1]);
+			writer.newLine();
+		}
+
 		writer.close();
 
 	}
