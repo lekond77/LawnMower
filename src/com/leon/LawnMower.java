@@ -12,6 +12,9 @@ public class LawnMower {
 		File inputDirectory = new File("C:/Users/leo/eclipse-workspace/lawnmower/input/level3/");
 		String outputDirectory = "C:/Users/leo/eclipse-workspace/lawnmower/output/level3/";
 
+		//File inputDirectory = new File("C:/Users/leo/Desktop/level1r/");
+		//String outputDirectory = "C:/Users/leo/Desktop/level1r/";
+		
 		if (inputDirectory.isDirectory()) {
 
 			File[] files = inputDirectory.listFiles((dir, name) -> name.endsWith(".in"));
@@ -28,7 +31,7 @@ public class LawnMower {
 							lawns = fileManager.lawnList(file.getPath());
 
 							BufferedWriter writer = new BufferedWriter(
-									new FileWriter(outputDirectory + "output3_" + i + ".out"));
+									new FileWriter(outputDirectory + "level3_" + i + ".out"));
 
 							for (Lawn lawn : lawns) {
 

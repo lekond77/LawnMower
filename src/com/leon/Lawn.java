@@ -138,8 +138,7 @@ public class Lawn {
 				}
 			}
 
-			//System.out.println(lawnCell);
-			if (countTraversalCel + 2 == lawn.size()) {
+			if (countTraversalCel + 2 == lawn.size() && !isTreeCell(lawnCell[x])) {
 				return "VALID";
 			}
 		}
